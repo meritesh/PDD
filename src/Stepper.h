@@ -89,7 +89,7 @@
     unsigned long setSpeed(long whatSpeed);
 
     // mover method:
-    int step(int number_of_steps, unsigned long step_delay, int step_number);
+    int step(int number_of_steps, unsigned long step_delay, int step_number,gpio *pin_1,gpio *pin_2);
 
 
   //private:

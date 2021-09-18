@@ -4,37 +4,61 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../src/ADS123X.c \
 ../src/Main.c \
 ../src/PDD.c \
+../src/Stepper.c \
 ../src/adc.c \
 ../src/encoder.c \
+../src/encoderfunctions.c \
 ../src/file.c \
 ../src/gpiotest.c \
+../src/loadcellfunctions.c \
+../src/loadcelltest.c \
 ../src/newgpio.c \
 ../src/pwm_o.c \
-../src/pwmandanalog.c 
+../src/pwmandadcfunctions.c \
+../src/pwmandanalog.c \
+../src/stepperfunctions.c \
+../src/steppertest.c 
 
 OBJS += \
+./src/ADS123X.o \
 ./src/Main.o \
 ./src/PDD.o \
+./src/Stepper.o \
 ./src/adc.o \
 ./src/encoder.o \
+./src/encoderfunctions.o \
 ./src/file.o \
 ./src/gpiotest.o \
+./src/loadcellfunctions.o \
+./src/loadcelltest.o \
 ./src/newgpio.o \
 ./src/pwm_o.o \
-./src/pwmandanalog.o 
+./src/pwmandadcfunctions.o \
+./src/pwmandanalog.o \
+./src/stepperfunctions.o \
+./src/steppertest.o 
 
 C_DEPS += \
+./src/ADS123X.d \
 ./src/Main.d \
 ./src/PDD.d \
+./src/Stepper.d \
 ./src/adc.d \
 ./src/encoder.d \
+./src/encoderfunctions.d \
 ./src/file.d \
 ./src/gpiotest.d \
+./src/loadcellfunctions.d \
+./src/loadcelltest.d \
 ./src/newgpio.d \
 ./src/pwm_o.d \
-./src/pwmandanalog.d 
+./src/pwmandadcfunctions.d \
+./src/pwmandanalog.d \
+./src/stepperfunctions.d \
+./src/steppertest.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

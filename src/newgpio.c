@@ -15,7 +15,7 @@
 #include <pthread.h>
 
 #include "libsoc_file.h"
-#include "libsoc_debug.h"
+//#include "libsoc_debug.h"
 #include "newgpio.h"
 
 #define STR_BUF 256
@@ -232,7 +232,7 @@ libsoc_gpio_set_level (gpio * current_gpio, gpio_level level)
 	  printf("\n invalid gpio pointer %d",current_gpio->gpio);
       return EXIT_FAILURE;
     }
-  printf("\n setting level to %d",level);
+  //printf("\n setting level to %d",level);
 
   if (file_write (current_gpio->value_fd, gpio_level_strings[level], 1) < 0)
     return EXIT_FAILURE;
@@ -258,15 +258,14 @@ libsoc_gpio_get_level (gpio * current_gpio)
 	  printf("\n level read failed %d",current_gpio->gpio);
     return LEVEL_ERROR;
   }
-
   if (level[0] == '0')
     {
-	  printf("\n read level as low  for %d",current_gpio->gpio);
+	  //printf("\n read level as low  for %d",current_gpio->gpio);
       return LOW;
     }
   else
     {
-	  printf("\n read level as high for %d",current_gpio->gpio);
+	  //printf("\n read level as high for %d",current_gpio->gpio);
       return HIGH;
     }
 }

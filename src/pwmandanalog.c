@@ -19,7 +19,7 @@
 //	pwm_export(2);
 //	pwm_set_period(2,20000000);                          //1 ms freq=1kHz => 1000000   ////  5-12 duty ratio
 //	pwm_set_duty_cycle(2,20000000,dr);
-//	pwm_enable(2,1);
+//	pwm_enable(2,1);                  //////////20000000
 //
 //	pwm_availability(3);
 //	pwm_export(3);
@@ -63,11 +63,11 @@
 //
 //	float position_feedback_in_V;                        //position feeback in volts wrt (0-3.3V) analog scale
 //
-//	position_feedback_in_V=adc_read(9);
-//	printf("\n Current position direct:%f\n",position_feedback_in_V);
+//	position_feedback_in_V=adc_read(8);
+//	printf("\n Current position direct voltage:%f\n",position_feedback_in_V);
 //	float position=(position_feedback_in_V/3.3)*100;     //position feedback in (0-100) reference scale
 //    printf("\n Current position:%f\n",position);
 //
-//    stepper();
+//    //stepper();
 //	return 0;
 //}

@@ -12,7 +12,7 @@
 //#else
 ////#include "WProgram.h"
 //#endif
-
+#include "newgpio.h"
 //======================== which one? ========================
 //#define ADS1232
 #define ADS1234
@@ -73,7 +73,7 @@
 		//long long int read();
 
 		// returns an average reading; times = how many times to read
-		float read_average(int times);
+		float read_average(int times,gpio *a,gpio *b,gpio *c);
 		
 		// returns (read_average() - OFFSET), that is the current value without the tare weight; times = how many readings to do
 		

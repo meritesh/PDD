@@ -1,3 +1,1 @@
-src/gpiotest.o: ../src/gpiotest.c ../src/newgpio.h
-
-../src/newgpio.h:
+src/gpiotest.o: ../src/gpiotest.c

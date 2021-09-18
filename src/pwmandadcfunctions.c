@@ -7,6 +7,8 @@
 
 
 void pwmset(int pinnumber, int dr){
+	if(dr > 250)
+		dr = 100;
 
 	pwm_availability(pinnumber);
 		pwm_export(pinnumber);
@@ -33,8 +35,8 @@ void servoset(int pinnumber, int degree){
 		pwm_unexport(pinnumber);
 }
 
-float getadcvalue(int pinNumber){
-		float position_feedback_in_V;                        //position feeback in volts wrt (0-3.3V) analog scale
-		position_feedback_in_V=adc_read(9); 			     ///////// this is in 0-3.3 range
-		return position_feedback_in_V;
-}
+//float getadcvalue(int pinNumber){
+//		float position_feedback_in_V;                        //position feeback in volts wrt (0-3.3V) analog scale
+//		position_feedback_in_V=adc_read(pinNumber); 			     ///////// this is in 0-3.3 range
+//		return position_feedback_in_V;
+//}

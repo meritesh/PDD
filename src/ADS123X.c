@@ -36,10 +36,10 @@ void beginl(int apin_DOUT, int apin_SCLK, int apin_PDWN){
   libsoc_gpio_set_direction(pdwn, OUTPUT);
   //pinMode(apin_PDWN, OUTPUT);
 
-  power_up();
-//  pin_DOUT = dout;
-//  pin_SCLK = sclk;
-//  pin_PDWN = pdwn;
+  //power_up();
+//  pin_DOUT = apin_DOUT;
+//  pin_SCLK = apin_SCLK;
+//  pin_PDWN = apin_PDWN;
 
 }
 
@@ -47,6 +47,19 @@ void beginl(int apin_DOUT, int apin_SCLK, int apin_PDWN){
 //{
 //  return libsoc_gpio_get_level(pin_DOUT) == LOW;
 //}
+
+
+void delayc(int number_of_seconds)
+{
+    // Converting time into milli_seconds
+    unsigned long milli_seconds = 100 * number_of_seconds;
+
+    // Storing start time
+    clock_t start_time = clock();
+
+    // looping till required time is not achieved
+    while (clock() < start_time + milli_seconds);
+}
 
 
 void power_up(void)
@@ -76,27 +89,33 @@ void power_down(void)
  * Get the raw ADC value. Can block up to 100ms in normal operation.
  * Returns 0 on success, an error code otherwise.
  */
-long reada()
-{gpio *pdwn = libsoc_gpio_request(122, LS_GPIO_SHARED);
-libsoc_gpio_set_direction(pdwn, OUTPUT);
-	  gpio *sclk = libsoc_gpio_request(114, LS_GPIO_SHARED);
-	  libsoc_gpio_set_direction(sclk, OUTPUT);
-	  gpio *dout = libsoc_gpio_request(113, LS_GPIO_SHARED);
-	  libsoc_gpio_set_direction(dout, INPUT);
+unsigned long reada(gpio *a,gpio *b,gpio *c)
+{//delayc(1000);
+		  pin_DOUT = c;
+		  pin_SCLK = b;
+		  pin_PDWN = a;
+		  libsoc_gpio_set_level(pin_PDWN, HIGH);
+		  libsoc_gpio_set_level(pin_SCLK, LOW);
 
 
-	  pin_DOUT = dout;
-	  pin_SCLK = sclk;
-	  pin_PDWN = pdwn;
+//	gpio *pdwn = libsoc_gpio_request(122, LS_GPIO_SHARED);
+//libsoc_gpio_set_direction(pin_DOUT, OUTPUT);
+//	  gpio *sclk = libsoc_gpio_request(114, LS_GPIO_SHARED);
+//	  libsoc_gpio_set_direction(pin_SCLK, OUTPUT);
+//	  gpio *dout = libsoc_gpio_request(113, LS_GPIO_SHARED);
+//	  libsoc_gpio_set_direction(pin_PDWN, INPUT);
+
+
+
     int i=0;
-    u_int8_t value;
-    //unsigned long start;
+    unsigned long value;
+    unsigned long start;
 	unsigned int waitingTime;
 	unsigned int SettlingTimeAfterChangeChannel=0;
 
-	
-	SettlingTimeAfterChangeChannel=55; // if(_speed==FAST)
-	//else SettlingTimeAfterChangeChannel=405;
+
+	//SettlingTimeAfterChangeChannel=55; // if(_speed==FAST)
+	SettlingTimeAfterChangeChannel=405000;//405000
 
 
     /* A high to low transition on the data pin means that the ADS1231
@@ -105,37 +124,38 @@ libsoc_gpio_set_direction(pdwn, OUTPUT);
      * second!).
      * Note that just testing for the state of the pin is unsafe.
      */
-	 
 
-		waitingTime=20; //if(_speed==FAST)
-		//else waitingTime=150;
+
+		//waitingTime=20; //if(_speed==FAST)
+		waitingTime=150;
 
 	waitingTime+=SettlingTimeAfterChangeChannel;
 
 	waitingTime+=600; //[ms] Add some extra time ( sometimes takes longer than what datasheet claims! )
-	
-//    start=clock();
-//    while(libsoc_gpio_get_level(pin_DOUT) != HIGH)
-//    {
-//        if(clock()-start > waitingTime)
-//            return TIMEOUT_HIGH; // Timeout waiting for HIGH
-//    }
-//
-//    start=clock();
-//    while(libsoc_gpio_get_level(pin_DOUT) != LOW)
-//    {
-//        if(clock()-start > waitingTime)
-//            return TIMEOUT_LOW; // Timeout waiting for LOW
-//    }
+
+    start=clock();
+    while(libsoc_gpio_get_level(pin_DOUT) != HIGH)
+    {
+        if(clock()-start > waitingTime)
+            return 0; // Timeout waiting for HIGH
+    }
+
+    start=clock();
+    while(libsoc_gpio_get_level(pin_DOUT) != LOW)
+    {
+        if(clock()-start > waitingTime)
+            return 0; // Timeout waiting for LOW
+    }
 
     // Read 24 bits
     for(i=23 ; i >= 0; i--) {
-    	libsoc_gpio_set_level(pin_SCLK, HIGH);
-        value = (value << 1) + libsoc_gpio_get_level(pin_DOUT);
-        libsoc_gpio_set_level(pin_SCLK, LOW);
+    	libsoc_gpio_set_level(b, HIGH);
+        value = (value << 1) + libsoc_gpio_get_level(c);
+        libsoc_gpio_set_level(b, LOW);
+        //delayc(5);
     }
 
-	
+
     /* Bit 23 is acutally the sign bit. Shift by 8 to get it to the
      * right position (31), divide by 256 to restore the correct value.
      */
@@ -153,17 +173,26 @@ libsoc_gpio_set_direction(pdwn, OUTPUT);
     return value; // Success
 }
 
- float read_average(int times) {
+ float read_average(int times,gpio *a,gpio *b,gpio *c) {
 
-	long sum = 0;
+	float sum = 0;
 	//ERROR_t err;
 	for (char i = 0; i < times; i++) {
-		long val = reada();
-		sum += val;
+		//delayc(1000);
+		//printf("one read");
+		unsigned long val = reada(a,b,c);
+		printf("%lld crude value vemry\n", reada(a,b,c));
+		sum = sum + val;
+		printf("%lld sum value\n",sum);
 		yield();
 
 	}
 	//if(times==0) return DIVIDED_by_ZERO;
-	float value = (float)sum / times;
+	float value = sum / times;
+	printf("%lld asdfgadgjsdj\n",sum);
+	printf("%f asdfgadgjsdj\n",value);
 	return value;
 }
+
+
+

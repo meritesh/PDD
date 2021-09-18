@@ -8,8 +8,8 @@
 
 
 int pin_count =2;
-int motor_pin_1 = 113;
-int motor_pin_2 = 114;
+int motor_pin_1 = 123;
+int motor_pin_2 = 124;
 unsigned long last_step_time = 0;
 int direction = 0;
 int number_of_steps = 1600;
@@ -45,7 +45,7 @@ unsigned long setSpeed(long whatSpeed) //3200
  * Moves the motor steps_to_move steps.  If the number is negative,
  * the motor moves in the reverse direction.
  */
-int step(int steps_to_move, unsigned long step_delay, int step_number)
+int step(int steps_to_move, unsigned long step_delay, int step_number,gpio *pin_1,gpio *pin_2)
 {unsigned long last_step_time = 0;
   int steps_left = abs(steps_to_move);  // how many steps to take
   int direction = 0;
@@ -53,14 +53,15 @@ int step(int steps_to_move, unsigned long step_delay, int step_number)
   if (steps_to_move > 0) { direction = 1; }
   if (steps_to_move < 0) { direction = 0; }
 
-  gpio *pin_1 = libsoc_gpio_request(motor_pin_1, LS_GPIO_SHARED);
-  gpio *pin_2 = libsoc_gpio_request(motor_pin_1, LS_GPIO_SHARED);
+//  gpio *pin_1 = libsoc_gpio_request(motor_pin_1, LS_GPIO_SHARED);
+//  gpio *pin_2 = libsoc_gpio_request(motor_pin_1, LS_GPIO_SHARED);
   // decrement the number of steps, moving one step each time:
   while (steps_left > 0)
   {
     unsigned long now = clock();
+    //printf("\n%lld\n",now);
     // move only if the appropriate delay has passed:
-    if (1) //now - this->last_step_time >= step_delay      ////********
+    if (now - last_step_time >= step_delay) //now - this->last_step_time >= step_delay      ////********
     {
       // get the timeStamp of when you stepped:
       last_step_time = now;                        ////***
@@ -83,9 +84,13 @@ int step(int steps_to_move, unsigned long step_delay, int step_number)
       // decrement the steps left:
       steps_left--;
       // step the motor to step number 0, 1, ..., {3 or 10}
+	  libsoc_gpio_set_direction(pin_1, OUTPUT);
 
+
+	  libsoc_gpio_set_direction(pin_2, OUTPUT);
       stepMotor(step_number % 4, pin_1, pin_2);
     }
+
   }
   return step_number;
 }
@@ -97,11 +102,8 @@ int step(int steps_to_move, unsigned long step_delay, int step_number)
 void stepMotor(int thisStep, gpio *pin_1, gpio *pin_2)
 {
 
+//printf("%d <- this step",thisStep);
 
-	  libsoc_gpio_set_direction(pin_1, OUTPUT);
-
-
-	  libsoc_gpio_set_direction(pin_2, OUTPUT);
 
   if (pin_count == 2) {
     switch (thisStep) {

@@ -52,7 +52,7 @@ float adc_read(int adc_number)
     sprintf(tmp_str1,"/sys/bus/iio/devices/iio\:device0/in_voltage%d_raw",adc_number);
     fd = open(tmp_str1, O_RDONLY);
     read(fd,tmp_str2, 20);
-    printf("Analog Input: %s\n", tmp_str2);
+    //printf("Analog Input: %s\n", tmp_str2);
     close(fd); //close value file
     float x = atoi(tmp_str2);      //return string to integer
     float y=(x/4096)*3.3;
