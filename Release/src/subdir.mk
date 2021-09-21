@@ -15,6 +15,7 @@ C_SRCS += \
 ../src/gpiotest.c \
 ../src/loadcellfunctions.c \
 ../src/loadcelltest.c \
+../src/manbackup1.c \
 ../src/newgpio.c \
 ../src/pwm_o.c \
 ../src/pwmandadcfunctions.c \
@@ -34,6 +35,7 @@ OBJS += \
 ./src/gpiotest.o \
 ./src/loadcellfunctions.o \
 ./src/loadcelltest.o \
+./src/manbackup1.o \
 ./src/newgpio.o \
 ./src/pwm_o.o \
 ./src/pwmandadcfunctions.o \
@@ -53,6 +55,7 @@ C_DEPS += \
 ./src/gpiotest.d \
 ./src/loadcellfunctions.d \
 ./src/loadcelltest.d \
+./src/manbackup1.d \
 ./src/newgpio.d \
 ./src/pwm_o.d \
 ./src/pwmandadcfunctions.d \

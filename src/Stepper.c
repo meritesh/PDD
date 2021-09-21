@@ -61,7 +61,7 @@ int step(int steps_to_move, unsigned long step_delay, int step_number,gpio *pin_
     unsigned long now = clock();
     //printf("\n%lld\n",now);
     // move only if the appropriate delay has passed:
-    if (now - last_step_time >= step_delay) //now - this->last_step_time >= step_delay      ////********
+    if (now - last_step_time >= step_delay*100) //now - this->last_step_time >= step_delay      ////********
     {
       // get the timeStamp of when you stepped:
       last_step_time = now;                        ////***
@@ -84,11 +84,8 @@ int step(int steps_to_move, unsigned long step_delay, int step_number,gpio *pin_
       // decrement the steps left:
       steps_left--;
       // step the motor to step number 0, 1, ..., {3 or 10}
-	  libsoc_gpio_set_direction(pin_1, OUTPUT);
 
-
-	  libsoc_gpio_set_direction(pin_2, OUTPUT);
-      stepMotor(step_number % 4, pin_1, pin_2);
+      stepMotor((step_number+1) % 4, pin_1, pin_2);
     }
 
   }

@@ -12,8 +12,8 @@ void pwmset(int pinnumber, int dr){
 
 	pwm_availability(pinnumber);
 		pwm_export(pinnumber);
-		pwm_set_period(pinnumber,1000000);                          //1 ms freq=1kHz => 1000000   ////  5-12 duty ratio
-		pwm_set_duty_cycle(pinnumber,1000000,dr);
+		pwm_set_period(pinnumber,10000);                          //1 ms freq=1kHz => 1000000   ////  5-12 duty ratio
+		pwm_set_duty_cycle(pinnumber,10000,dr);
 		pwm_enable(pinnumber,1);
 		pwm_unexport(pinnumber);
 }

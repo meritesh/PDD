@@ -127,7 +127,7 @@ unsigned long reada(gpio *a,gpio *b,gpio *c)
 
 
 		//waitingTime=20; //if(_speed==FAST)
-		waitingTime=150;
+		waitingTime=15000;
 
 	waitingTime+=SettlingTimeAfterChangeChannel;
 
@@ -175,22 +175,22 @@ unsigned long reada(gpio *a,gpio *b,gpio *c)
 
  float read_average(int times,gpio *a,gpio *b,gpio *c) {
 
-	float sum = 0;
+	unsigned long sum = 0;
 	//ERROR_t err;
 	for (char i = 0; i < times; i++) {
 		//delayc(1000);
 		//printf("one read");
 		unsigned long val = reada(a,b,c);
-		printf("%lld crude value vemry\n", reada(a,b,c));
+		//printf("%lld crude value vemry\n", reada(a,b,c));
 		sum = sum + val;
-		printf("%lld sum value\n",sum);
+		//printf("%ld sum value\n",sum);
 		yield();
 
 	}
 	//if(times==0) return DIVIDED_by_ZERO;
 	float value = sum / times;
-	printf("%lld asdfgadgjsdj\n",sum);
-	printf("%f asdfgadgjsdj\n",value);
+//	printf("%lld asdfgadgjsdj\n",sum);
+//	printf("%f asdfgadgjsdj\n",value);
 	return value;
 }
 

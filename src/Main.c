@@ -5,6 +5,8 @@
 #include <time.h>
 #include "adc.h"
 #include "encoderfunctions.h"
+#include "ADS123X.h"
+//#include "newgpio.h"
 
 float encoderPosition;
 float adcvalue;
@@ -14,9 +16,9 @@ int pumppower;
 int trynumber;
 float sensitivity;
 float m_live;
-float pillWeight = 0.40;
+float pillWeight = 0.880;
 int m,n,o = 1;
-const float binAngle[11] = { 26.92, 60.25, 92.84, 125.70, 158.53, 191.66, 224.48, 257.41, 290.31, 322.8, 355.29};
+const float binAngle[11] = { 26.92, 60.25, 92.84, 125.70, 156.67, 191.66, 224.48, 257.41, 290.31, 322.8, 355.29};//158.53
 
 
 
@@ -49,15 +51,17 @@ float encoderPosition;
 void steppermove(int movethissteps,gpio *pin_1,gpio *pin_2)
 {
 	//StepperInit(1600,113,114);
-	unsigned long step_delay = setSpeed(1600);
+	unsigned long step_delay = setSpeed(4000);
 	printf("\n%d \n",step_number);
-	step_number = step(movethissteps, step_delay, step_number,pin_1,pin_2);
+	step_number = step(10000, step_delay, step_number, pin_1, pin_2);
 
 }
 
 void carouselRotation(float a)
 {gpio *pin_1 = libsoc_gpio_request(123, LS_GPIO_SHARED);
 gpio *pin_2 = libsoc_gpio_request(124, LS_GPIO_SHARED);
+libsoc_gpio_set_direction(pin_1, OUTPUT);
+libsoc_gpio_set_direction(pin_2, OUTPUT);
 	printf("%f\n",a);
 	bool dir = true; //bool instead
 step_number = 0;
@@ -67,13 +71,13 @@ step_number = 0;
   else if (a == encoderPosition) {int steps = 0; }
   else {bb = -1;}
   printf("difference in angle is %f",(a - encoderPosition));
-  int steps = 0.9 * abs((a - encoderPosition)) * 4.44;
+  int steps = 0.9 * abs((a - encoderPosition)) * 8.88;
   printf("we wil do this many %d",steps);
   steps = bb * steps;
   delayc(1000);
   printf("cehck 1");
   steppermove(steps,pin_1,pin_2);
-  delayc(1000);
+  delayc(50000);
   //stepper.runToPosition();
   //stepper.setCurrentPosition(0);
   step_number = 0;
@@ -81,7 +85,7 @@ step_number = 0;
   delayc(5);
   int xx= 0;
 
-  while (!(((encoderPosition > (a - 0.5)) && (encoderPosition < (a + 0.5)))))
+  while (!(((encoderPosition > (a - 0.25)) && (encoderPosition < (a + 0.25)))))
    {
 	  if(encoderPosition > (a - 0.5))
     //encoderPosition = getPositionSPI();
@@ -149,6 +153,12 @@ void carouselshake()
 
 /////////////////
 int main(){
+	//while(1){float encoderPosition = getPositionSPI();}
+	//while(1){
+	float loadcellactuator = 0; loadcellactuator = adc_read(0);
+	printf("%f loadcellact \n ",loadcellactuator);
+//}
+
 
 	gpio *a = libsoc_gpio_request(113, LS_GPIO_SHARED);
 	libsoc_gpio_set_direction(a, OUTPUT);
@@ -156,6 +166,8 @@ int main(){
 		  libsoc_gpio_set_direction(b, OUTPUT);
 		  gpio *c = libsoc_gpio_request(25, LS_GPIO_SHARED);//122
 		  libsoc_gpio_set_direction(c, INPUT);
+//		  gpio *d = libsoc_gpio_request(122, LS_GPIO_SHARED);//122
+//				  libsoc_gpio_set_direction(d, OUTPUT);
 
 	initialise();
 
@@ -221,10 +233,17 @@ case 1:
 			{
 				printf("\nEnter your passcode : 1234");
 				initialise();
+				loadcellactuator = adc_read(0);
 				int i = 4;
-				carouselRotation(158.53);//put in angle here
+				carouselRotation(binAngle[i]);//put in angle here
 				pwmset(3, 100);
-				//while(potentiometer >= our expected value)
+				printf("waiting\n");
+				//delayc(50000);
+				//libsoc_gpio_set_level(d, HIGH);
+				loadcellactuator = adc_read(0);
+				while(loadcellactuator > 0.2){loadcellactuator = adc_read(0);
+				//printf("%f loadcellact \n ",loadcellactuator);
+				}
 				//read the m_ tare value and set it by using loadcellRead
 				m_tare = loadcellread(4,a,b,c);
 				m_tare = loadcellread(4,a,b,c);
@@ -390,21 +409,24 @@ void pillpickfunction(gpio *a,gpio *b,gpio *c)
 
 
 
-int tempfunctiontobenamed(gpio *a,gpio *b,gpio *c)
+int tempfunctiontobenamed(float k,gpio *a,gpio *b,gpio *c)
 {
 	if (k > 0.7 && k < 1.3)                 //30 percent tolerence
 	{
-	                delayc(50);
+	                delayc(50000);
 	                //while(analogRead(pwm_z_pin_sen)<100){delay(100);}
 	                m_tare = loadcellread(4,a,b,c);
 	                trynumber = 0;
-	                //Serial.println("One pill only, success");
+	                printf("One pill only, success\n");
+	                delayc(50000);
 	                return 0;
 	}
 
     else if (k > 1.3)
     {
       //Serial.println("More than One pill");
+    	printf("ore than One pill\n");
+    		                delayc(50000);
      pwmset(1, 0);
       delayc(50); // can add close loop here
       //n = 4;    m = 3;                            //Case 4 : probe down
@@ -413,7 +435,8 @@ int tempfunctiontobenamed(gpio *a,gpio *b,gpio *c)
       return 0;
     }
     else
-    {
+    {    	printf("no pill\n");
+    delayc(50000);
     	//servotry();
     	if (trynumber < 4)
     	{
@@ -432,15 +455,18 @@ void pillpickup(gpio *a,gpio *b,gpio *c)
 {
 					poweronpump(pillWeight);//give in pill weight as input and bool type from API
 					pillpickfunction(a,b,c);
-					delayc(20000);
-
+					//delayc(20000);//20000 == 2 sec
+					float linearactuator = adc_read(0);
+					while(linearactuator > 1){linearactuator = adc_read(0);
+									printf("%f linear \n ",linearactuator);}
 					m_live = loadcellread(4,a,b,c);
-					printf("....... %f .....................................2........................",m_tare);
+					printf("....... %f .....................................2.......................\n.",m_tare);
 					//float k = numberofpills(a,b,c);
 					float k = ((m_tare - m_live) / pillWeight);
-					printf("............................................3........................");
-					printf("%f  %f",k,(m_tare - m_live));//takes selected pill's weight
-					tempfunctiontobenamed(a,b,c); //takes k
+					printf("............................................3........................\n");
+					printf("%f  %f  m tare live value\n",m_tare, m_live);
+					printf("%f  %f k and m tare minus live value\n",k,(m_tare - m_live));//takes selected pill's weight
+					tempfunctiontobenamed(k,a,b,c); //takes k
 }
 
 
@@ -449,12 +475,12 @@ void pilldispence()
 				//Serial.println("Carousel rotation for dispensing pill");
 					printf("..........................................................now dispencsing\n.............\n..............\n..........");
 				  pwmset(3, 0);
-	              delayc(2000);
+	              delayc(20000);
 	              encoderPosition = getPositionSPI();
 	              carouselRotation(binAngle[0]);
-	              delayc(500);
+	              delayc(5000);
 	              pwmset(1, 0);
-	              delayc(3000);
+	              delayc(30000);
 	              printf("Dispense succesful");
 }
 
